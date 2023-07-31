@@ -12,7 +12,7 @@ from tile import Tile
 
 eventlet.monkey_patch()
 
-socket_io = socketio.Server(cors_allowed_origins="http://localhost:5173")
+socket_io = socketio.Server(cors_allowed_origins="https://imen.koi-jan.com")
 app = socketio.WSGIApp(socket_io)
 
 rooms = []
@@ -555,4 +555,4 @@ def on_vote(socket_id: str, pid: str):
 
 
 if __name__ == "__main__":
-    eventlet.wsgi.server(eventlet.listen(("0.0.0.0", 8888)), app)
+    eventlet.wsgi.server(eventlet.listen(("0.0.0.0", 8080)), app)

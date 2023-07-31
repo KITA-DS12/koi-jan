@@ -9,7 +9,7 @@ const joinType = ref(null);
 const roomId = ref("");
 const message = ref("");
 
-const socket = io("http://localhost:8888");
+const socket = io("https://koi-jan-qv5xle3sqq-an.a.run.app");
 
 const createRoom = () => {
   sessionStorage.setItem("host", true);
@@ -55,7 +55,7 @@ onMounted(() => {
     rel="stylesheet"
   />
   <div id="app">
-    <img src="@/assets/koi-jan.png" alt="logo">
+    <img src="@/assets/koi-jan.png" alt="logo" />
     <div class="center">
       <div class="input-group">
         <input
@@ -152,7 +152,7 @@ input::placeholder {
   color: rgb(107, 76, 83, 0.5);
 }
 
-img{
+img {
   width: 30vw;
   margin-bottom: 2vw;
 }

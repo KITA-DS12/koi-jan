@@ -12,7 +12,7 @@ const readyPlayers = ref({});
 const host = ref("false");
 const ready = ref(false);
 
-const socket = io("http://localhost:8888");
+const socket = io("https://koi-jan-qv5xle3sqq-an.a.run.app");
 
 socket.on("players_info", (members) => {
   players.value = members;

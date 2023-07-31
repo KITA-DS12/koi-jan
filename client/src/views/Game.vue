@@ -4,7 +4,7 @@ import { computed, nextTick, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import MahjongTile from "@/components/parts/MahjongTile.vue";
 
-const socket = io("http://localhost:8888");
+const socket = io("https://koi-jan-qv5xle3sqq-an.a.run.app");
 
 const socketId = ref("");
 const playerId = ref("");
@@ -320,7 +320,7 @@ onMounted(() => {
       <div v-if="voteFlag">
         <div class="center-content-vote">
           <div v-for="player in players">
-            <div  class="three-tiles-vote">
+            <div class="three-tiles-vote">
               <div class="tiles" v-for="tile in player.selected_tiles">
                 <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" />
               </div>
@@ -337,7 +337,7 @@ onMounted(() => {
               <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" />
             </div>
           </div>
-          <div class="bahuu">{{ windDirections[table.round_wind]}}</div>
+          <div class="bahuu">{{ windDirections[table.round_wind] }}</div>
           <div class="center-all">
             <div>部屋番号 : {{ roomId }}</div>
             <div>残り枚数 : {{ table.wall_num }}</div>
@@ -436,8 +436,10 @@ onMounted(() => {
         <div class="modal-content">
           <span class="close-button" @click="closeModal">&times;</span>
           <h2>Final Score Results</h2>
-          <div v-for="player in players"> 
-            <p v-if="player.score_info">{{ player.name }}: {{ player.score_info.cost }}</p>
+          <div v-for="player in players">
+            <p v-if="player.score_info">
+              {{ player.name }}: {{ player.score_info.cost }}
+            </p>
           </div>
           <button class="modal-close-button" @click="closeModal">Close</button>
         </div>
@@ -457,7 +459,7 @@ onMounted(() => {
   font-family: "M PLUS Rounded 1c", sans-serif;
 }
 
-.pon{
+.pon {
   display: flex;
   flex-direction: row;
 }
@@ -650,7 +652,7 @@ button:hover {
   border: 3px solid rgb(107, 76, 83, 0.8);
 }
 
-.all_tiles{
+.all_tiles {
   display: flex;
   flex-direction: row;
   /* justify-content: center;
@@ -659,20 +661,23 @@ button:hover {
   top: 2vw;
   left: 14vw;
 }
-.bahuu{
+
+.bahuu {
   position: absolute;
   top: 3.5vw;
   left: 15.8vw;
   font-size: 10vw;
   color: #fff;
 }
-.center-all{
+
+.center-all {
   position: absolute;
   top: 2vw;
   left: 2vw;
   font-size: 1.3vw;
-  color:#fff;
+  color: #fff;
 }
+
 .modal {
   position: fixed;
   top: 0;
@@ -722,12 +727,13 @@ button:hover {
   /* display: inline-block; */
   margin-left: 2vw;
 }
-.pon{
+
+.pon {
   display: flex;
   flex-direction: row;
 }
 
-.three-tiles-vote{
+.three-tiles-vote {
   display: flex;
   flex-direction: row;
   justify-content: center;
