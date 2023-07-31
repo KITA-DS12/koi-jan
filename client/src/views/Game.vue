@@ -4,7 +4,7 @@ import { computed, nextTick, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import MahjongTile from "@/components/parts/MahjongTile.vue";
 
-const socket = io("http://localhost:8888");
+const socket = io("https://koi-jan-qv5xle3sqq-an.a.run.app");
 
 const socketId = ref("");
 const playerId = ref("");
