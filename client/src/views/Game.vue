@@ -221,7 +221,10 @@ onMounted(() => {
 <template>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&display=swap"
+    rel="stylesheet"
+  />
   <div class="body">
     <div class="container" v-if="displayFlag">
       <div class="top-content content" v-if="topPlayer">
@@ -287,11 +290,22 @@ onMounted(() => {
       </div>
       <div class="bottom-content content" v-if="bottomPlayer">
         <div class="tiles" v-for="tile in bottomPlayer.value.hand.tiles">
-          <MahjongTile @click="discardTile(tile)" :tile="tile.name" :scale="0.5" :rotate="0" :isRedDora="tile.bonus" />
+          <MahjongTile
+            @click="discardTile(tile)"
+            :tile="tile.name"
+            :scale="0.5"
+            :rotate="0"
+            :isRedDora="tile.bonus"
+          />
         </div>
         <div class="tsumo" v-if="bottomPlayer.value.hand.tsumo">
-          <MahjongTile @click="discardTile(bottomPlayer.value.hand.tsumo)" :tile="bottomPlayer.value.hand.tsumo.name"
-            :scale="0.5" :rotate="0" :isRedDora="bottomPlayer.value.hand.tsumo.bonus" />
+          <MahjongTile
+            @click="discardTile(bottomPlayer.value.hand.tsumo)"
+            :tile="bottomPlayer.value.hand.tsumo.name"
+            :scale="0.5"
+            :rotate="0"
+            :isRedDora="bottomPlayer.value.hand.tsumo.bonus"
+          />
         </div>
         <div class="calls" v-for="call in bottomPlayer.value.hand.calls">
           <div class="pon" v-if="call.type == 'pon'">
@@ -350,14 +364,20 @@ onMounted(() => {
         </div>
         <div class="right-discarded discarded" v-if="rightPlayer">
           <div class="discarded">
-            <div class="tiles" v-for="tile in rightPlayer.value.discarded_tiles">
+            <div
+              class="tiles"
+              v-for="tile in rightPlayer.value.discarded_tiles"
+            >
               <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" />
             </div>
           </div>
         </div>
         <div class="bottom-discarded discarded" v-if="bottomPlayer">
           <div class="discarded">
-            <div class="tiles" v-for="tile in bottomPlayer.value.discarded_tiles">
+            <div
+              class="tiles"
+              v-for="tile in bottomPlayer.value.discarded_tiles"
+            >
               <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" />
             </div>
           </div>
@@ -366,31 +386,35 @@ onMounted(() => {
       <div class="all_direction">
         <div class="top-direction direction" v-if="topPlayer">
           <img :src="`/${topPlayer.value.seat_wind}.png`" width="100%" />
-          <p class="name-direction">{{ topPlayer.value.name }}</p>
-          <p class="score-direction">{{ topPlayer.value.score }}点</p>
+          <p>{{ topPlayer.value.name }}</p>
         </div>
         <div class="left-direction direction" v-if="leftPlayer">
           <img :src="`/${leftPlayer.value.seat_wind}.png`" width="100%" />
-          <p class="name-direction">{{ leftPlayer.value.name }}</p>
-          <p class="score-direction">{{ leftPlayer.value.score }}点</p>
+          <p>{{ leftPlayer.value.name }}</p>
         </div>
         <div class="right-direction direction" v-if="rightPlayer">
           <img :src="`/${rightPlayer.value.seat_wind}.png`" width="100%" />
-          <p class="name-direction">{{ rightPlayer.value.name }}</p>
-          <p class="score-direction">{{ rightPlayer.value.score }}点</p>
+          <p>{{ rightPlayer.value.name }}</p>
         </div>
         <div class="bottom-direction direction" v-if="bottomPlayer">
           <img :src="`/${bottomPlayer.value.seat_wind}.png`" width="100%" />
-          <p class="name-direction">{{ bottomPlayer.value.name }}</p>
-          <p class="score-direction">{{ bottomPlayer.value.score }}点</p>
+          <p>{{ bottomPlayer.value.name }}</p>
         </div>
       </div>
       <div class="all_button">
         <div class="button-container">
-          <button @click="riichi" v-if="action.riichi && riichiFlag" class="riichi">
+          <button
+            @click="riichi"
+            v-if="action.riichi && riichiFlag"
+            class="riichi"
+          >
             リーチ: ON
           </button>
-          <button @click="riichi" v-if="action.riichi && !riichiFlag" class="riichi">
+          <button
+            @click="riichi"
+            v-if="action.riichi && !riichiFlag"
+            class="riichi"
+          >
             リーチ: OFF
           </button>
           <button @click="pon" v-if="action.pon">ポン</button>
@@ -398,7 +422,11 @@ onMounted(() => {
           <button @click="ron" v-if="action.ron">ロン</button>
           <button @click="skipRon" v-if="action.ron">スキップ</button>
           <button @click="tsumo" v-if="action.tsumo" class="tsumo">ツモ</button>
-          <button @click="discardTile(bottomPlayer.value.hand.tsumo)" v-if="action.tsumo" class="tsumo">
+          <button
+            @click="discardTile(bottomPlayer.value.hand.tsumo)"
+            v-if="action.tsumo"
+            class="tsumo"
+          >
             スキップ
           </button>
         </div>
@@ -498,17 +526,9 @@ img {
 }
 
 .all_direction p {
-  margin: 5px;
-}
-
-.name-direction {
   font-size: 1.5vw;
-  color: black;
-}
-
-.score-direction {
-  color: grey;
-  font-size: 1.1vw;
+  color: #000;
+  margin: 5px;
 }
 
 .center-content-vote {
