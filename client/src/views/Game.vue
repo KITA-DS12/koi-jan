@@ -826,4 +826,8 @@ button:hover {
   background-color: #ffe6f0;
   color: #fff;
 }
+
+.tiles{
+  margin: 0 0.15vw;
+}
 </style>
