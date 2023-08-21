@@ -24,3 +24,8 @@ clientのみ起動
 ```
 dokcer-compose up client
 ```
+psqlを起動
+```
+docker exec -it koi-jan_db_1 bash
+psql -U root -d koijan
+```
