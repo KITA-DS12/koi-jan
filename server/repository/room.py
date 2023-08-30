@@ -72,6 +72,23 @@ def unready_room(room_id: int, player_id: int):
     )
     execute_query(query, (ready_room_id, ))
 
+######
+def fetch_ready_player_id(room_id: int):
+    query = (
+        "SELECT pd.player_id, pd.name, pd.socket_id "
+        "FROM player_detail pd "
+        "INNER JOIN ready_room er ON pd.player_id = er.player_id "
+        "WHERE er.room_id = %s"
+    )
+    result = fetch_data(query, (room_id,))
+
+    ready_player_id = []
+    for row in result:
+        player_id, name, socket_id = row
+        player = Player(player_id, name, socket_id)
+        ready_player_id.append(player)
+
+    return ready_player_id
 
 def fetch_room(room_id: int) -> Room:
     query = (

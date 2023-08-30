@@ -15,7 +15,11 @@ const ready = ref(false);
 const socket = io("http://localhost:8888");
 
 socket.on("players_info", (player_names) => {
+  // players.value = Object.keys(player_ready_info)
   players.value = player_names;
+  console.log("uuuu");
+  // readyPlayers.value = player_ready_info
+  readyPlayers.value = player_ready_info
   players.value.forEach((playerName) => {
     addKeyIfNotExists(readyPlayers.value, playerName, false);
   });
@@ -79,11 +83,12 @@ onMounted(() => {
   // serverからreadiedを受け取ってreadyPlayers[p_name]をtrueにする
   socket.on("readied_game", (player_name) => {
     console.log("a", player_name);
+    // console.log("a", readyPlayers);
     readyPlayers.value[player_name] = true;
   });
 
   socket.on("unreadied_game", (player_name) => {
-    console.log("a", player_name);
+    console.log("b", player_name);
     readyPlayers.value[player_name] = false;
   });
 

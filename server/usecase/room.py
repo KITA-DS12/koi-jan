@@ -51,11 +51,20 @@ def get_room_by_player_id(player_id: int) -> Room:
     return room
 
 
-def get_players(socket_id: str):
+def get_player_ready_info(socket_id: str):
     player = repository.player.fetch_player_by_socket_id(socket_id)
     room = repository.room.fetch_open_room_by_player_id(player.id)
     players = repository.room.fetch_players_in_room(room.id)
-    player_names = [p.name for p in players]
+    ready_player_id = repository.room.fetch_ready_player_id(room.id) # roomの中のplayer_idを格納
+    player_ready_info = {}
+    for player in players:
+        # player.id が ready_player_idに含まれてる -> ready
+        if player.id in ready_player_id:
+            player_ready_info[player.name] = True
+        # player_ready_info[player.name] = ready(true or false)
+        else:
+            player_ready_info[player.name] = False
+    player_names = [p.id for p in players]
 
     return player_names
 
