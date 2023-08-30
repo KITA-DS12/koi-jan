@@ -3,10 +3,10 @@ import psycopg2
 
 
 def get_connection():
-    db_host = os.environ.get("PGHOST")
-    db_name = os.environ.get("PGDATABASE")
-    db_user = os.environ.get("PGUSER")
-    db_password = os.environ.get("PGPASSWORD")
+    db_host = os.environ.get("INSTANCE_UNIX_SOCKET")
+    db_name = os.environ.get("DB_NAME")
+    db_user = os.environ.get("DB_USER")
+    db_password = os.environ.get("DB_PASS")
 
     connection = psycopg2.connect(
         host=db_host,
