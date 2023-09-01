@@ -1,5 +1,5 @@
-from db.database import execute_query
-from db.database import fetch_data
+from db.database import execute_query, fetch_data
+
 
 def enter_watch(room_id: int, player_id: int):
     query = (
@@ -8,12 +8,14 @@ def enter_watch(room_id: int, player_id: int):
     )
     execute_query(query, (room_id, player_id))
 
+
 def leave_watch(room_id: int, player_id: int):
     query = (
         "INSERT INTO leave_watch (room_id, player_id) "
         "VALUES (%s, %s)"
     )
     execute_query(query, (room_id, player_id))
+
 
 def get_watching_players(room_id: int):
     query = (

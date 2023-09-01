@@ -1,15 +1,15 @@
-from repository.db.watch import watch_repo
+from socketio import Server
+
 from model.player import Player
+from model.room import Room
+import repository.db.watch as watch_repo
+import interfaces.response.watch as emit
 
 
-def enter_watch(self, room_id: int, player_id: int):
-    self.watch_repo.enter_watch(room_id, player_id)
+def enter_watch(socket_io: Server, room: Room, player: Player):
+    watch_repo.enter_watch(room.id, player.id)
+    emit.notice_enter_watch(socket_io, [player.socket_id], room.number)
 
 
-def leave_watch(self, room_id: int, player_id: int):
-    self.watch_repo.leave_watch(room_id, player_id)
-
-
-def get_watching_players(self, room_id: int) -> List[Player]:
-    watching_players = self.watch_repo.get_watching_players(room_id)
-    return watching_players
+def leave_watch(room_id: int, player_id: int):
+    watch_repo.leave_watch(room_id, player_id)

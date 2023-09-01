@@ -65,6 +65,14 @@ onMounted(() => {
 
     router.push(`/room/${roomId.value}/waiting`);
   });
+
+  socket.on("notice_enter_watch", (room_number) => {
+    roomId.value = room_number;
+    sessionStorage.setItem("socketId", socketId.value);
+    message.value = "";
+
+    router.push(`/room/${roomId.value}/watch`);
+  });
 });
 </script>
 
