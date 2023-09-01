@@ -28,6 +28,11 @@ def joined_room(socket_io: Server, to: List[str], player_name: str):
         socket_io.emit("joined_room", player_name, room=socket_id)
 
 
+def watching_game(socket_io: Server, to: List[str], player_name: str):
+    for socket_id in to:
+        socket_io.emit("watching_room", player_name, room=socket_id)
+
+
 def reconnected(socket_io: Server, to: List[str], new_socket_id: str):
     for socket_id in to:
         socket_io.emit("reconnected", new_socket_id, room=socket_id)
