@@ -25,7 +25,6 @@ const chats = ref([]);
 const drawFlag = ref(false);
 const riichiFlag = ref(false);
 const voteFlag = ref(false);
-const votedFlag = ref(false);
 const selectCount = ref(0);
 const chatFlag = ref(false);
 const reactionFlag = ref(false);
@@ -156,75 +155,12 @@ const getImgDirection = (player_id) => {
   }
 };
 
-const clickTile = (tile) => {
-  if (drawFlag.value) {
-    socket.emit("discard_tile", tile.id, riichiFlag.value);
-    drawFlag.value = false;
-    canRiichi.value = false;
-    canTsumo.value = false;
-  }
-
-  if (voteFlag.value && selectCount.value < 3) {
-    socket.emit("select_tile", tile.id);
-  }
-};
-
-const cancelTile = (tile) => {
-  socket.emit("cancel_tile", tile.id);
-};
-
-const skip = () => {
-  if (canTsumo.value) {
-    canRiichi.value = false;
-    canTsumo.value = false;
-  } else {
-    socket.emit("skip");
-    canPon.value = false;
-    canKan.value = false;
-    canRon.value = false;
-  }
-};
-const call = (callType) => {
-  socket.emit("call", callType);
-  canPon.value = false;
-  canKan.value = false;
-  canRon.value = false;
-  canRiichi.value = false;
-  canTsumo.value = false;
-};
-const riichi = () => {
-  riichiFlag.value = !riichiFlag.value;
-  if (riichiFlag.value == true) {
-    socket.emit("riichi");
-  }
-};
-const ron = () => {
-  socket.emit("agari", "ron");
-  canPon.value = false;
-  canKan.value = false;
-  canRon.value = false;
-  canRiichi.value = false;
-  canTsumo.value = false;
-};
-const tsumo = () => {
-  socket.emit("agari", "tsumo");
-  canPon.value = false;
-  canKan.value = false;
-  canRon.value = false;
-  canRiichi.value = false;
-  canTsumo.value = false;
-};
 
 const closeModal = () => {
   showModal.value = false;
   if (host.value == "true") {
     socket.emit("close_result");
   }
-};
-
-const vote = (targetPlayerId) => {
-  socket.emit("vote", targetPlayerId);
-  votedFlag.value = true;
 };
 
 const sendMessage = () => {
@@ -237,12 +173,14 @@ const sendReaction = (name) => {
 };
 
 const leftWatch = () => {
+  myId.value = leftPlayer.value.value.id
   setSeatPlayers(leftPlayer.value.value.id);
 
   reloadDisplay();
 }
 
 const rightWatch = () => {
+  myId.value = rightPlayer.value.value.id
   setSeatPlayers(rightPlayer.value.value.id);
 
   reloadDisplay();
@@ -272,7 +210,7 @@ socket.on("update_game", (received_game) => {
   dora.value = received_game["game"]["round"]["dora"];
   currentPlayerId.value = received_game["game"]["round"]["current_player_id"];
 
-  myId.value = getMyIdBySocketId(players.value, socketId.value);
+  myId.value = players.value[0].id
   setSeatPlayers(myId.value);
 
   reloadDisplay();
@@ -559,49 +497,25 @@ socket.on("update_reaction", (received_reaction) => {
         </div>
       </div>
       <div class="bottom-content content" v-if="bottomPlayer">
-        <div v-if="!riichiFlag" class="tiles" v-for="tile in bottomPlayer.value.hand">
-          <MahjongTile @click="clickTile(tile)" :tile="tile.name" :scale="0.5" :rotate="0" :limit="false" />
-        </div>
-        <div v-if="riichiFlag" class="tiles" v-for="tile in bottomPlayer.value.hand">
-          <div v-if="tile.can_riichi">
-            <MahjongTile @click="clickTile(tile)" :tile="tile.name" :scale="0.5" :rotate="0" :limit="false" />
-          </div>
-          <div v-if="!tile.can_riichi">
-            <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" :limit="true" />
-          </div>
+        <div class="tiles" v-for="tile in bottomPlayer.value.hand">
+          <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" :limit="false" />
         </div>
         <div v-if="bottomPlayer.value.tsumo" class="tsumo">
-          <div v-if="riichiFlag">
-            <div v-if="!bottomPlayer.value.tsumo.can_riichi">
-              <MahjongTile :tile="bottomPlayer.value.tsumo.name" :scale="0.5" :rotate="0" :limit="true" />
-            </div>
-            <div v-if="bottomPlayer.value.tsumo.can_riichi">
-              <MahjongTile @click="clickTile(bottomPlayer.value.tsumo)" :tile="bottomPlayer.value.tsumo.name" :scale="0.5"
-                :rotate="0" :limit="false" />
-            </div>
-          </div>
-          <div v-if="!riichiFlag">
-            <MahjongTile @click="clickTile(bottomPlayer.value.tsumo)" :tile="bottomPlayer.value.tsumo.name" :scale="0.5"
-              :rotate="0" :limit="false" />
+          <div>
+            <MahjongTile :tile="bottomPlayer.value.tsumo.name" :scale="0.5" :rotate="0" :limit="false" />
           </div>
         </div>
         <div class="calls" v-for="call in bottomPlayer.value.call">
           <div class="pon" v-if="call.type == 'pon'">
             <div class="tiles" v-for="tile in call.tiles">
-              <div v-if="voteFlag">
-                <MahjongTile @click="clickTile(tile)" :tile="tile.name" :scale="0.5" :rotate="0" />
-              </div>
-              <div v-else>
+              <div>
                 <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" />
               </div>
             </div>
           </div>
           <div class="kan" v-if="call.type == 'kan'">
             <div class="tiles" v-for="tile in call.tiles">
-              <div v-if="voteFlag">
-                <MahjongTile @click="clickTile(tile)" :tile="tile.name" :scale="0.5" :rotate="0" />
-              </div>
-              <div v-else>
+              <div>
                 <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" />
               </div>
             </div>
@@ -611,29 +525,14 @@ socket.on("update_reaction", (received_reaction) => {
       <div v-if="voteFlag">
         <div class="center-content-vote">
           <div v-for="player in players">
-            <div v-if="player.id == myId">
-              <div class="three-tiles-vote">
-                <div class="tiles" v-for="tile in player.selected">
-                  <MahjongTile @click="cancelTile(tile)" :tile="tile.name" :scale="0.5" :rotate="0" />
-                </div>
-              </div>
-              <button class="disable-vote" disabled>
-                {{ player.name }}に投票
-              </button>
-            </div>
-            <div v-else>
+            <div>
               <div class="three-tiles-vote">
                 <div class="tiles" v-for="tile in player.selected">
                   <MahjongTile :tile="tile.name" :scale="0.5" :rotate="0" />
                 </div>
               </div>
-              <div v-if="votedFlag">
-                <button class="disable-vote" disabled>
-                  {{ player.name }}に投票
-                </button>
-              </div>
-              <div v-else>
-                <button @click="vote(player.id)">
+              <div>
+                <button>
                   {{ player.name }}に投票
                 </button>
               </div>
@@ -715,23 +614,6 @@ socket.on("update_reaction", (received_reaction) => {
           <img v-if="reactionFlags.bottom" :src="`/src/assets/face-${reactionNames.bottom}.png`"
             class="notice-reaction-bottom" />
           <!-- <p class="score-direction">{{ bottomPlayer.score }}点</p> -->
-        </div>
-      </div>
-      <div class="all_button">
-        <div class="button-container">
-          <button @click="call('pon')" v-if="canPon">ポン</button>
-          <button @click="call('kan')" v-if="canKan">カン</button>
-          <button @click="riichi" v-if="canRiichi && riichiFlag && !canTsumo">
-            リーチ: ON
-          </button>
-          <button @click="riichi" v-if="canRiichi && !riichiFlag && !canTsumo">
-            リーチ: OFF
-          </button>
-          <button @click="tsumo" v-if="canTsumo">ツモ</button>
-          <button @click="ron" v-if="canRon">ロン</button>
-          <button @click="skip" v-if="canPon || canKan || canRon || canTsumo">
-            スキップ
-          </button>
         </div>
       </div>
       <div class="modal" :class="{ 'show-modal': showModal }">
