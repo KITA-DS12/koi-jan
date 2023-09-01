@@ -4,6 +4,7 @@ import socketio
 
 import interfaces.controller.room as room_controller
 import interfaces.controller.game as game_controller
+import interfaces.controller.watch as watch_controller
 import interfaces.controller.chat as chat_controller
 import interfaces.controller.reaction as reaction_controller
 
@@ -15,6 +16,7 @@ if __name__ == "__main__":
 
     room_controller.set(socket_io)
     game_controller.set(socket_io)
+    watch_controller.set(socket_io)
     chat_controller.set(socket_io)
     reaction_controller.set(socket_io)
 

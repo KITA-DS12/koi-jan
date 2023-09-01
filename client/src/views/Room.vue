@@ -5,7 +5,6 @@ import router from "@/router";
 
 const socketId = ref("");
 const playerName = ref("");
-const joinType = ref(null);
 const roomId = ref("");
 const message = ref("");
 
@@ -22,14 +21,29 @@ const joinRoom = () => {
   message.value = "";
 };
 
-const showPopup = ref(false); // ポップアップの表示状態を管理する変数
+const showEnterPopUp = ref(false);
 
-const openPopup = () => {
-  showPopup.value = true;
+const openEnterPopUp = () => {
+  showEnterPopUp.value = true;
 };
 
-const closePopup = () => {
-  showPopup.value = false;
+const closeEnterPopUp = () => {
+  showEnterPopUp.value = false;
+};
+
+const showWatchPopUp = ref(false);
+
+const openWatchPopUp = () => {
+  showWatchPopUp.value = true;
+};
+
+const closeWatchPopUp = () => {
+  showWatchPopUp.value = false;
+};
+
+const watchRoom = () => {
+  socket.emit("watch_room", playerName.value, roomId.value);
+  message.value = "";
 };
 
 onMounted(() => {
@@ -59,7 +73,14 @@ onMounted(() => {
     <img class="logo-img" src="@/assets/koijan_1.png" alt="logo" />
     <div class="center">
       <div class="input-group">
-        <input required placeholder="プレイヤー名" v-model="playerName" type="text" maxlength="8" id="playerName" />
+        <input
+          required
+          placeholder="プレイヤー名"
+          v-model="playerName"
+          type="text"
+          maxlength="8"
+          id="playerName"
+        />
       </div>
       <div class="radio-d">
         <label class="radio-button">
@@ -67,24 +88,41 @@ onMounted(() => {
           ルーム作成
         </label>
         <label class="radio-button">
-          <input @click="openPopup" type="radio" />
+          <input @click="openEnterPopUp" type="radio" />
           ルーム参加
         </label>
+        <label class="radio-button">
+          <input @click="openWatchPopUp" type="radio" />
+          観戦する
+        </label>
       </div>
-      <div v-if="showPopup" class="popup-overlay" @click="closePopup">
+      <div v-if="showEnterPopUp" class="popup-overlay" @click="closeEnterPopUp">
         <div class="popup-content" @click.stop>
           <div class="input-group">
-            <input required placeholder="ルーム番号" v-model="roomId" maxlength="4" type="text" />
+            <input
+              required
+              placeholder="ルーム番号"
+              v-model="roomId"
+              maxlength="4"
+              type="text"
+            />
           </div>
           <button @click="joinRoom">参加する</button>
         </div>
       </div>
-      <div v-if="joinType == 2" class="join2">
-        <input class="join2-input" required placeholder="ルーム番号" v-model="roomId" maxlength="4" type="text" />
-        <label class="radio-button">
-          <input @click="enterRoom" type="radio" />
-          参加
-        </label>
+      <div v-if="showWatchPopUp" class="popup-overlay" @click="closeWatchPopUp">
+        <div class="popup-content" @click.stop>
+          <div class="input-group">
+            <input
+              required
+              placeholder="ルーム番号"
+              v-model="roomId"
+              maxlength="4"
+              type="text"
+            />
+          </div>
+          <button @click="watchRoom">参加する</button>
+        </div>
       </div>
       <div class="date-image">
         <img src="@/assets/date-2.png" alt="date" />
@@ -102,27 +140,33 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(45deg,
-      rgba(221, 214, 243, 0.5),
-      rgba(250, 172, 168, 0.5),
-      rgba(255, 252, 220, 0.5));
+  background: linear-gradient(
+    45deg,
+    rgba(221, 214, 243, 0.5),
+    rgba(250, 172, 168, 0.5),
+    rgba(255, 252, 220, 0.5)
+  );
   background-size: 200% 200%;
   animation: bggradient 5s ease infinite;
   color: rgb(12, 30, 58);
   font-family: "M PLUS Rounded 1c", sans-serif;
   flex-direction: column;
 }
-@keyframes bggradient { 
+
+@keyframes bggradient {
   0% {
     background-position: 0% 50%;
   }
+
   50% {
     background-position: 100% 50%;
   }
+
   100% {
     background-position: 0% 50%;
   }
 }
+
 .center {
   display: flex;
   flex-direction: column;
@@ -136,6 +180,7 @@ onMounted(() => {
   /* background-color: #fff; */
   margin-top: 30px;
 }
+
 .input-group {
   display: flex;
   flex-direction: column;
@@ -236,7 +281,6 @@ input::placeholder {
   color: rgb(234, 56, 73, 0.8);
 }
 
-
 .radio-d {
   display: flex;
   align-items: center;
@@ -272,7 +316,7 @@ input::placeholder {
 }
 
 /* To show the selected state */
-.radio-button input[type="radio"]:checked+span {
+.radio-button input[type="radio"]:checked + span {
   background-color: #2196f3;
   color: #fff;
 }
