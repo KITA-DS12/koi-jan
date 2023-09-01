@@ -125,9 +125,10 @@ const assignRelativeSeats = (myWind) => {
   const myIndex = winds.indexOf(myWind);
 
   const assignedRelativeSeats = {};
-  assignedRelativeSeats.bottom = myId.value;
   for (var i = 0; i < seatWinds.value.length; i++) {
-    if (seatWinds.value[i]["wind"] == winds[(myIndex + 1) % winds.length]) {
+    if (seatWinds.value[i]["wind"] == winds[(myIndex + 0) % winds.length]) {
+      assignedRelativeSeats.bottom = seatWinds.value[i]["player_id"];
+    } else if (seatWinds.value[i]["wind"] == winds[(myIndex + 1) % winds.length]) {
       assignedRelativeSeats.right = seatWinds.value[i]["player_id"];
     } else if (
       seatWinds.value[i]["wind"] == winds[(myIndex + 2) % winds.length]
@@ -234,6 +235,18 @@ const sendMessage = () => {
 const sendReaction = (name) => {
   socket.emit("send_reaction", reactions[name]);
 };
+
+const leftWatch = () => {
+  setSeatPlayers(leftPlayer.value.value.id);
+
+  reloadDisplay();
+}
+
+const rightWatch = () => {
+  setSeatPlayers(rightPlayer.value.value.id);
+
+  reloadDisplay();
+}
 
 socket.on("reconnected", (socket_id) => {
   socketId.value = socket_id;
@@ -451,14 +464,24 @@ socket.on("update_reaction", (received_reaction) => {
         </div>
       </div>
       <div v-else>
+        <div id="left-close-container">
+          <a @click="leftWatch">
+            <img src="/src/assets/left.png" alt="left" class="message-img" />
+          </a>
+        </div>
         <div id="chat-close-container">
-          <a id="chat-btn" @click="chatFlag = true">
+          <a @click="chatFlag = true">
             <img src="/src/assets/message-love.PNG" alt="message" class="message-img" />
           </a>
         </div>
         <div id="re-close-container">
-          <a id="chat-btn" @click="reactionFlag = true">
+          <a @click="reactionFlag = true">
             <img src="/src/assets/face-love.PNG" alt="face" class="face-img" />
+          </a>
+        </div>
+        <div id="right-close-container">
+          <a @click="rightWatch">
+            <img src="/src/assets/right.png" alt="right" class="message-img" />
           </a>
         </div>
       </div>
@@ -1096,6 +1119,42 @@ button:hover {
   z-index: 1;
 }
 
+#left-close-container {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 5%;
+  right: 310px;
+  background: #fff;
+  border: 3.5px solid #efb0bb;
+  border-radius: 50px;
+  margin-right: 50px;
+  animation-name: fadeInAnime;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  /* opacity: 0; */
+  cursor: pointer;
+  z-index: 1;
+}
+
+#right-close-container {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  bottom: 5%;
+  right: 70px;
+  background: #fff;
+  border: 3.5px solid #efb0bb;
+  border-radius: 50px;
+  margin-right: 50px;
+  animation-name: fadeInAnime;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+  /* opacity: 0; */
+  cursor: pointer;
+  z-index: 1;
+}
+
 #chat-close-container {
   position: fixed;
   width: 60px;
@@ -1163,19 +1222,6 @@ button:hover {
   top: 1px;
   right: 10px;
   color: #fff;
-}
-
-.chat-btn {
-  width: 8px;
-  height: 8px;
-  font-size: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #fff5;
-  border: 2px solid #efb0bb;
-  border-radius: 30px 30px 30px 0px;
-  margin-right: 50px;
 }
 
 .message-img {
