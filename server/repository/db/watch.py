@@ -1,4 +1,5 @@
 from db.database import execute_query, fetch_data
+from model.player import Player
 
 
 def enter_watch(room_id: int, player_id: int):
@@ -17,12 +18,11 @@ def leave_watch(room_id: int, player_id: int):
     execute_query(query, (room_id, player_id))
 
 
-def get_watching_players(room_id: int):
+def fetch_watching_players(room_id: int):
     query = (
-        "SELECT p.id, pd.name "
+        "SELECT pd.player_id, pd.name pd.socket_id "
         "FROM enter_watch AS ew "
-        "JOIN player AS p ON ew.player_id = p.id "
-        "JOIN player_detail AS pd ON p.id = pd.player_id "
+        "JOIN player_detail AS pd ON ew.player_id = pd.player_id "
         "WHERE ew.room_id = %s "
         "AND NOT EXISTS ("
         "    SELECT 1 "
@@ -31,5 +31,11 @@ def get_watching_players(room_id: int):
         "    AND lw.player_id = ew.player_id "
         ") "
     )
-    watching_players = fetch_data(query, (room_id,))
-    return watching_players
+    result = fetch_data(query, (room_id,))
+    watchers = []
+
+    for row in result:
+        player_id, name, socket_id = row
+        watchers.append(Player(player_id, name, socket_id))
+
+    return watchers

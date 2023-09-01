@@ -14,6 +14,8 @@ def set(socket_io: Server):
         player = player_util.get_player_by_socket_id(old_socket_id)
         room = room_util.get_room_by_player_id(player.id)
         players = player_util.get_players_in_room(room.number)
+        to_players = player_util.get_players_and_wathcers_in_room(room.number)
+        to = [p.socket_id for p in to_players]
         room_usecase.reconnect(socket_io,
                                new_socket_id, old_socket_id, players)
 
