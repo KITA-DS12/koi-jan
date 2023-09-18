@@ -24,7 +24,7 @@ import repository.db.vote as vote_repo
 import interfaces.response.game as emit
 
 
-def setup_round(socket_io: Server, room: Room):
+def setup_round(socket_io: Server, room: Room, to: List[str]):
     tiles = tile_repo.fetch_all_tiles()
     random.shuffle(tiles)
     wall = wall_repo.create_wall(tiles)
@@ -44,10 +44,10 @@ def setup_round(socket_io: Server, room: Room):
 
     room.game.round = round
 
-    emit.update_game(socket_io, [p.socket_id for p in room.players], room)
+    emit.update_game(socket_io, to, room)
 
 
-def next_round(socket_io: Server, room: Room):
+def next_round(socket_io: Server, room: Room, to: List[str]):
     tiles = tile_repo.fetch_all_tiles()
     random.shuffle(tiles)
     wall = wall_repo.create_wall(tiles)
@@ -56,7 +56,7 @@ def next_round(socket_io: Server, room: Room):
     round_number = round_repo.fetch_round_count(room.game.id) + 1
     if round_number >= 5:
         emit.notice_end_game(socket_io,
-                             [p.socket_id for p in room.players])
+                             to)
     round = round_repo.create_round(room.game.id, round_number, "east",
                                     dealer.id, wall.id)
     round.wall_remaining_number = wall.remaining_number
@@ -77,7 +77,7 @@ def next_round(socket_io: Server, room: Room):
     round.current_player_id = dealer.id
     room.game.round = round
 
-    emit.update_game(socket_io, [p.socket_id for p in room.players], room)
+    emit.update_game(socket_io, to, room)
 
 
 def get_round(socket_io: Server, room: Room, round_id: int, socket_id: str):
@@ -103,17 +103,17 @@ def get_round(socket_io: Server, room: Room, round_id: int, socket_id: str):
     emit.update_game(socket_io, [socket_id], room)
 
 
-def deal_tiles(socket_io: Server, room: Room):
+def deal_tiles(socket_io: Server, room: Room, to: List[str]):
     for player in room.players:
         draw_repo.draw_tile(room.game.round.id, player.id, 13)
         player.hand = draw_repo.fetch_hand(room.game.round.id, player.id)
     emit.update_players(socket_io,
-                        [p.socket_id for p in room.players],
+                        to,
                         room.players)
     round = room.game.round
     remaining_number = wall_repo.fetch_remaining_number(round.wall_id)
     emit.update_remaining_number(socket_io,
-                                 [p.socket_id for p in room.players],
+                                 to,
                                  remaining_number)
 
     emit.notice_next_draw(socket_io,
@@ -124,7 +124,8 @@ def deal_tiles(socket_io: Server, room: Room):
 def update_current_player(socket_io: Server,
                           round_id: int,
                           players: List[Player],
-                          player_id: int):
+                          player_id: int,
+                          to: List[str] = []):
     current_player_id = player_id
     while True:
         current_wind = round_repo.fetch_wind_by_player_id(round_id,
@@ -138,7 +139,7 @@ def update_current_player(socket_io: Server,
             break
 
     emit.update_current_player(socket_io,
-                               [p.socket_id for p in players],
+                               to,
                                next_player_id)
 
     emit.notice_next_draw(socket_io,
@@ -151,7 +152,8 @@ def discard_tile(socket_io: Server,
                  players: List[Player],
                  player: Player,
                  tile_id: int,
-                 is_riichi: bool):
+                 is_riichi: bool,
+                 to: List[str]):
     round = round_util.get_round(round_id)
     discard_repo.discard_tile(round_id, player.id, tile_id)
     tile = tile_repo.fetch_tile(tile_id)
@@ -164,7 +166,7 @@ def discard_tile(socket_io: Server,
     player.call = call_repo.fetch_call(round_id, player.id)
     player.is_riichi = riichi_repo.fetch_riichi(round_id, player.id)
     player.tsumo = None
-    emit.update_player(socket_io, [p.socket_id for p in players], player)
+    emit.update_player(socket_io, to, player)
 
     none_call_flags = []
     for p in players:
@@ -192,28 +194,29 @@ def discard_tile(socket_io: Server,
 def draw_tile(socket_io: Server,
               round: Round,
               players: List[Player],
-              player: Player):
+              player: Player,
+              to: List[str]):
     player.hand = draw_repo.fetch_hand(round.id, player.id)
     player.discarded = discard_repo.fetch_discarded_tiles(round.id, player.id)
     player.call = call_repo.fetch_call(round.id, player.id)
     player.is_riichi = riichi_repo.fetch_riichi(round.id, player.id)
     tiles = draw_repo.draw_tile(round.id, player.id)
     if tiles is None:
-        emit.notice_end_round(socket_io, [p.socket_id for p in players])
+        emit.notice_end_round(socket_io, to)
         for p in players:
             p.hand = draw_repo.fetch_hand(round.id, p.id)
             p.discarded = discard_repo.fetch_discarded_tiles(round.id, p.id)
             p.call = call_repo.fetch_call(round.id, p.id)
             p.score = agari_repo.fetch_score(round.id, p.id)
-        emit.update_players(socket_io, [p.socket_id for p in players], players)
+        emit.update_players(socket_io, to, players)
         return
     else:
         tile = tiles[0]
     player.tsumo = tile
-    emit.update_player(socket_io, [p.socket_id for p in players], player)
+    emit.update_player(socket_io, to, player)
     remaining_number = wall_repo.fetch_remaining_number(round.wall_id)
     emit.update_remaining_number(socket_io,
-                                 [p.socket_id for p in players],
+                                 to,
                                  remaining_number)
 
     seat_wind = round_repo.fetch_wind_by_player_id(round.id, player.id)
@@ -236,7 +239,8 @@ def call(socket_io: Server,
          round_id: str,
          players: List[Player],
          caller: Player,
-         call_type: str):
+         call_type: str,
+         to: List[str]):
     caller.hand = draw_repo.fetch_hand(round_id, caller.id)
     caller.discarded = discard_repo.fetch_discarded_tiles(round_id, caller.id)
     caller.is_riichi = riichi_repo.fetch_riichi(round_id, caller.id)
@@ -258,9 +262,9 @@ def call(socket_io: Server,
         call_repo.call_tile(call_id, call_tile_id)
 
     caller.call = call_repo.fetch_call(round_id, caller.id)
-    emit.update_player(socket_io, [p.socket_id for p in players], caller)
+    emit.update_player(socket_io, to, caller)
     emit.update_current_player(socket_io,
-                               [p.socket_id for p in players],
+                               to,
                                caller.id)
     emit.notice_drew(socket_io, [caller.socket_id])
 
@@ -269,7 +273,8 @@ def agari(socket_io: Server,
           round: Round,
           players: List[Player],
           player: Player,
-          agari_type: str):
+          agari_type: str,
+          to: List[str]):
     player.hand = draw_repo.fetch_hand(round.id, player.id)
     player.discarded = discard_repo.fetch_discarded_tiles(round.id, player.id)
     player.call = call_repo.fetch_call(round.id, player.id)
@@ -288,7 +293,7 @@ def agari(socket_io: Server,
         agari_tile = player.tsumo
 
     agari_repo.agari(round.id, player.id, player_id, tile_id, agari_type)
-    emit.notice_agari(socket_io, [p.socket_id for p in players])
+    emit.notice_agari(socket_io, to)
 
     seat_wind = round_repo.fetch_wind_by_player_id(round.id, player.id)
     result = score_util.agari(player, agari_tile, round.dora,
@@ -300,13 +305,13 @@ def agari(socket_io: Server,
 
     agari_count = agari_repo.fetch_agari_count(round.id)
     if agari_count >= 3:
-        emit.notice_end_round(socket_io, [p.socket_id for p in players])
+        emit.notice_end_round(socket_io, to)
         for p in players:
             p.score = agari_repo.fetch_score(round.id, p.id)
             p.hand = draw_repo.fetch_hand(round.id, p.id)
             p.discarded = discard_repo.fetch_discarded_tiles(round.id, p.id)
             p.call = call_repo.fetch_call(round.id, p.id)
-        emit.update_players(socket_io, [p.socket_id for p in players], players)
+        emit.update_players(socket_io, to, players)
     else:
         update_current_player(socket_io, round.id, players, player.id)
 
@@ -336,15 +341,16 @@ def tiles_discarded_during_riichi(socket_io: Server,
     emit.update_player(socket_io, [player.socket_id], player)
 
 
-def start_vote(socket_io: Server, round_id: int, players: List[Player]):
-    emit.notice_start_vote(socket_io, [p.socket_id for p in players])
+def start_vote(socket_io: Server, round_id: int, players: List[Player], to: List[str]):
+    emit.notice_start_vote(socket_io, to)
 
 
 def select_tile(socket_io: Server,
                 round_id: int,
                 players: List[Player],
                 player: Player,
-                tile_id: int):
+                tile_id: int,
+                to: List[str]):
     selected_tiles = select_repo.fetch_select_tiles(round_id, player.id)
 
     if tile_id not in [t.id for t in selected_tiles]:
@@ -359,7 +365,7 @@ def select_tile(socket_io: Server,
             p.call = call_repo.fetch_call(round_id, p.id)
 
         emit.update_players(socket_io,
-                            [p.socket_id for p in players],
+                            to,
                             players)
 
 
@@ -367,7 +373,8 @@ def cancel_tile(socket_io: Server,
                 round_id: int,
                 players: List[Player],
                 player: Player,
-                tile_id: int):
+                tile_id: int,
+                to: List[str]):
     select_repo.delete_tile(round_id, player.id, tile_id)
     emit.notice_unselected(socket_io, [player.socket_id])
 
@@ -379,7 +386,7 @@ def cancel_tile(socket_io: Server,
         p.call = call_repo.fetch_call(round_id, p.id)
 
     emit.update_players(socket_io,
-                        [p.socket_id for p in players],
+                        to,
                         players)
 
 
@@ -387,9 +394,10 @@ def vote(socket_io: Server,
          round_id: int,
          players: List[Player],
          player: Player,
-         target_player_id):
+         target_player_id,
+         to: List[str]):
     vote_repo.vote(round_id, player.id, target_player_id)
 
     vote_count = vote_repo.fetch_vote_count(round_id)
     if vote_count >= 4:
-        emit.notice_end_vote(socket_io, [p.socket_id for p in players])
+        emit.notice_end_vote(socket_io, to)
