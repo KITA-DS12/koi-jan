@@ -518,7 +518,6 @@ socket.on("update_reaction", (received_reaction) => {
       <div @click="reactionFlag= true" class="btn re-btn">スタンプ</div>
       <div @click="chatFlag= true" class="btn chat-btn">チャット</div>
       <div @click="ruleFlag = true" class="btn rule-btn">?</div>
-    </div>
 
       <div class="top-content content" v-if="topPlayer">
         <div class="tiles" v-for="_ in topPlayer.value.hand">
