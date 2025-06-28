@@ -514,7 +514,6 @@ socket.on("update_reaction", (received_reaction) => {
       </div>
       <img src="/src/assets/icons8-right.png" alt="right" @click="showNextRuleSection" class="chevron">
     </div>
-      
     <div v-else class="fade-in">
       <div @click="reactionFlag= true" class="btn re-btn">スタンプ</div>
       <div @click="chatFlag= true" class="btn chat-btn">チャット</div>
