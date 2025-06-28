@@ -82,6 +82,9 @@ def next_round(socket_io: Server, room: Room):
 
 def get_round(socket_io: Server, room: Room, round_id: int, socket_id: str):
     round = round_repo.fetch_round(round_id)
+    if round is None:
+        print(f"Warning: Round with id {round_id} not found")
+        return
     wall = wall_repo.fetch_wall(round.wall_id)
     round.wall_remaining_number = wall.remaining_number
     round.dora = wall_repo.fetch_dora(round.wall_id)
