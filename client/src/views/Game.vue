@@ -464,7 +464,7 @@ socket.on("update_reaction", (received_reaction) => {
       </div>
     </div>
     <div v-else-if="ruleFlag" class="ru-Flag">
-      <img src="/src/assets/icons8-left.png" alt="left" @click="showPreviousRuleSection" class="chevron">
+      <img src="/src/assets/icons8-left.png" alt="left" @click="showPreviousRuleSection" class="chevron" />
       <div id="ru-container">
         <div id="rule-header">
           <div id="rule-title">ルール説明</div>
@@ -477,7 +477,7 @@ socket.on("update_reaction", (received_reaction) => {
               <li>勝利を目指してアガリを目指す</li>
               <li>手牌の中から3つの牌を選択</li>
             </ol>
-            <img src="/src/assets/hai-sentaku.png" alt="rule1" class="rule1-img">
+            <img src="/src/assets/hai-sentaku.png" alt="rule1" class="rule1-img" />
           </div>
           <div v-else-if="currentRuleSection === 2" id="rule2" class="ru-section">
             <ol start="3">
@@ -485,8 +485,8 @@ socket.on("update_reaction", (received_reaction) => {
               <li>作成した文章をチャットに送信</li>
             </ol>
             <div class="rule2">
-              <img src="/src/assets/date-chat.png" alt="rule2" class="rule2-img">
-              <img src="/src/assets/date-chat2.png" alt="rule2" class="rule2-img">
+              <img src="/src/assets/date-chat.png" alt="rule2" class="rule2-img" />
+              <img src="/src/assets/date-chat2.png" alt="rule2" class="rule2-img" />
             </div>
           </div>
           <div v-else-if="currentRuleSection === 3" id="rule3" class="ru-section">
@@ -494,13 +494,13 @@ socket.on("update_reaction", (received_reaction) => {
               <li>一番キュンときた文章を作った人に投票</li>
               <li>麻雀点数 × 票数で点数が換算される</li>
             </ol>
-            <img src="/src/assets/vote-img.png" alt="rule3" class="rule3-img">
+            <img src="/src/assets/vote-img.png" alt="rule3" class="rule3-img" />
           </div>
           <div v-else-if="currentRuleSection === 4" id="rule4" class="ru-section">
             <ol start="7">
               <li>4ラウンドやって最も点数が高い人が勝ち</li>
             </ol>
-            <img src="/src/assets/couple.png" alt="rule4" class="rule4-img">
+            <img src="/src/assets/couple.png" alt="rule4" class="rule4-img" />
           </div>
         </div>
         <div class="dot-num">
@@ -512,7 +512,7 @@ socket.on("update_reaction", (received_reaction) => {
           </ul>
         </div>
       </div>
-      <img src="/src/assets/icons8-right.png" alt="right" @click="showNextRuleSection" class="chevron">
+      <img src="/src/assets/icons8-right.png" alt="right" @click="showNextRuleSection" class="chevron" />
     </div>
     <div v-else class="fade-in">
       <div @click="reactionFlag= true" class="btn re-btn">スタンプ</div>
