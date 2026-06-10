@@ -1,2 +1,18 @@
+# Python
 __pycache__
 .pyc
+
+# Node
+node_modules/
+
+# Build
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
