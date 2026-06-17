@@ -3,12 +3,14 @@ import { createRouter, createWebHistory } from "vue-router";
 import Room from "../views/Room.vue";
 import WaitingRoom from "../views/WaitingRoom.vue";
 import Game from "../views/Game.vue";
+import Watch from "../views/Watch.vue";
 import Home from "../views/Home.vue"
 
 const routes = [
   { path: "/room", component: Room },
   { path: "/room/:roomId/waiting", component: WaitingRoom },
   { path: "/room/:roomId/game", component: Game },
+  { path: "/room/:roomId/watch", component: Watch },
   { path: "/", component: Home },
 ];
 

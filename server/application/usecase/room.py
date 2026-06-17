@@ -57,12 +57,12 @@ def leave_room(socket_io: Server,
 def reconnect(socket_io: Server,
               new_socket_id: str,
               old_socket_id: str,
-              players: List[Player]):
+              to: List[str]):
     player_repo.update_player_socket_id(new_socket_id, old_socket_id)
     emit.reconnected(socket_io, [new_socket_id], new_socket_id)
     emit.players_info(socket_io,
                       [new_socket_id],
-                      [p.name for p in players])
+                      to)
 
 
 def ready(socket_io: Server,

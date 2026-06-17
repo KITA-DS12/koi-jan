@@ -307,3 +307,23 @@ CREATE TABLE send_reaction (
     FOREIGN KEY (player_id) REFERENCES player(id),
     FOREIGN KEY (reaction_id) REFERENCES reaction(id)
 );
+
+-- テーブル: enter_watch
+CREATE TABLE enter_watch (
+    id SERIAL PRIMARY KEY,
+    room_id INT,
+    player_id INT,
+    enter_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_id) REFERENCES room(id),
+    FOREIGN KEY (player_id) REFERENCES player(id)
+);
+
+-- テーブル: leave_watch
+CREATE TABLE leave_watch (
+    id SERIAL PRIMARY KEY,
+    room_id INT,
+    player_id INT,
+    leave_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (room_id) REFERENCES room(id),
+    FOREIGN KEY (player_id) REFERENCES player(id)
+);
